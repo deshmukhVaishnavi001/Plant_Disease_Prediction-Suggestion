@@ -61,6 +61,8 @@ bash
 Copy
 Edit
 streamlit run main.py
+
 Streamlit app link :https://plant-disease-prediction-suggestion.streamlit.app/
+
 🙋‍♀️ Author
 Vaishnavi Deshmukh –(https://www.linkedin.com/in/vaishnavi-deshmukh-004927282?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app)

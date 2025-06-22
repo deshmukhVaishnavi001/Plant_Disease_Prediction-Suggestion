@@ -5,6 +5,14 @@ import numpy as np
 import tensorflow as tf
 from PIL import Image
 import streamlit as st
+import gdown
+
+# 🔽 Auto-download model from Google Drive if not already present
+file_id = "18bU5xM_RdFTvq7l77uv0WXpbYyd44uvv"
+model_path = "plant_disease_detection_model.h5"
+
+if not os.path.exists(model_path):
+    gdown.download(f"https://drive.google.com/uc?id={file_id}", model_path, quiet=False)
 
 # Set up Streamlit page
 st.set_page_config(page_title="🌿 Plant Disease Detector", layout="centered")
@@ -14,12 +22,10 @@ st.markdown("<h1 style='text-align: center; color: green;'>🌿 Plant Disease De
 st.markdown("<p style='text-align: center;'>Upload a leaf image to detect disease and get treatment suggestions.</p>", unsafe_allow_html=True)
 st.markdown("---")
 
-# Paths
+# Load model and class indices
 working_dir = os.path.dirname(os.path.abspath(__file__))
-model_path = os.path.join(working_dir, "plant_disease_detection_model.h5")
 class_indices_path = os.path.join(working_dir, "class_indices.json")
 
-# Load model and class indices
 model = tf.keras.models.load_model(model_path, compile=False)
 with open(class_indices_path, 'r') as f:
     class_indices = json.load(f)
@@ -29,7 +35,6 @@ def load_and_preprocess_image_pil(image, target_size=(224, 224)):
     image = image.resize(target_size)
     img_array = np.array(image)
 
-    # Fix for grayscale or 4-channel images
     if img_array.ndim == 2:
         img_array = np.stack((img_array,) * 3, axis=-1)
     elif img_array.shape[2] == 4:
@@ -54,8 +59,7 @@ uploaded_image = st.file_uploader("📤 Upload a plant leaf image", type=["jpg",
 if uploaded_image is not None:
     try:
         image = Image.open(uploaded_image).convert("RGB")
-        display_image = image.resize((300, 300))  # For display only
-
+        display_image = image.resize((300, 300))
         st.image(display_image, caption="🖼️ Uploaded Image", use_container_width=False)
 
         if st.button("🔍 Classify"):
